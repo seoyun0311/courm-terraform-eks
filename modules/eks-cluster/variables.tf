@@ -29,3 +29,8 @@ variable "cluster_version" {
   type        = string
   default     = "1.30" # 기본값 설정
 }
+
+variable "node_group_name" {
+  description = "EKS 워커 노드 그룹의 식별자"
+  default     = "worker-node"
+}
