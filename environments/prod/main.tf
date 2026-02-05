@@ -35,6 +35,7 @@ module "eks_cluster" {
   project      = "courm"
   environment  = var.environment
   cluster_name = "courm-eks-${var.environment}"
+  node_group_name = "courm-worker"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.app_subnet_ids
