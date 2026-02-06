@@ -39,6 +39,7 @@ module "eks_cluster" {
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.app_subnet_ids
+  jenkins_iam_role_arn = module.jenkins.iam_role_arn
 }
 
 # ==============================================================================
@@ -94,7 +95,7 @@ module "sg_kafka" {
   egress_rules = [{ from_port = 0, to_port = 0, protocol = "-1", cidr_blocks = ["0.0.0.0/0"] }]
 }
 
-# (4) Jenkins Security Group (기존 유지)
+# (4) Jenkins Security Group
 module "sg_jenkins" {
   source = "../../modules/security-groups"
   name   = "courm-sg-jenkins-${var.environment}"
@@ -106,6 +107,29 @@ module "sg_jenkins" {
   egress_rules = [{ from_port = 0, to_port = 0, protocol = "-1", cidr_blocks = ["0.0.0.0/0"] }]
 }
 
+resource "aws_security_group_rule" "eks_cluster_ingress_jenkins" {
+  description              = "Allow Jenkins to communicate with EKS API Server"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+
+  security_group_id        = module.eks_cluster.cluster_security_group_id
+
+  source_security_group_id = module.sg_jenkins.security_group_id
+}
+
+resource "aws_security_group_rule" "jenkins_ingress_jnlp_from_nodes" {
+  description              = "Allow JNLP agents in EKS to connect to Jenkins Master"
+  type                     = "ingress"
+  from_port                = 50000
+  to_port                  = 50000
+  protocol                 = "tcp"
+
+  security_group_id        = module.sg_jenkins.security_group_id
+
+  source_security_group_id = module.eks_cluster.node_security_group_id
+}
 # ==============================================================================
 # 5. Data Stores & Tools
 # ==============================================================================
