@@ -39,3 +39,8 @@ variable "jenkins_iam_role_arn" {
   description = "IAM Role ARN of Jenkins"
   type        = string
 }
+
+variable "ci_subnet_ids" {
+  description = "Jenkins Agent가 배치될 서브넷 ID 리스트 (단일 AZ)"
+  type        = list(string)
+}

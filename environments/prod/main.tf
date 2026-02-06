@@ -40,6 +40,7 @@ module "eks_cluster" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.app_subnet_ids
   jenkins_iam_role_arn = module.jenkins.iam_role_arn
+  ci_subnet_ids = [module.vpc.app_subnet_ids[0]]
 }
 
 # ==============================================================================

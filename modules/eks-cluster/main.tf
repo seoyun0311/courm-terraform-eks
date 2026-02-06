@@ -111,6 +111,37 @@ module "eks" {
         AmazonEBSCSIDriverPolicy      = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
       }
     }
+
+    # 5. CI-Build (Jenkins Agent)
+    ci_build = {
+      name           = "courm-ng-ci"
+      instance_types = ["t3.medium"]
+      capacity_type  = "SPOT"
+
+      min_size       = 1
+      max_size       = 5
+      desired_size   = 1
+
+      subnet_ids     = var.ci_subnet_ids
+
+      labels = {
+        role = "ci"
+      }
+
+      # Jenkins 파드 설정에 'tolerations'를 넣어줘야 들어올 수 있음
+      taints = [
+        {
+          key    = "role"
+          value  = "ci"
+          effect = "NO_SCHEDULE"
+        }
+      ]
+
+      iam_role_additional_policies = {
+        AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+        AmazonEBSCSIDriverPolicy      = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+      }
+    }
   }
 
   cluster_addons = {
@@ -151,3 +182,4 @@ module "lb_role" {
     Project     = var.project
   }
 }
+
