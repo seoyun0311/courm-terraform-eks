@@ -20,27 +20,23 @@ variable "vpc_id" {
 }
 
 variable "subnet_ids" {
-  description = "EKS 워커 노드와 컨트롤 플레인이 배치될 서브넷 ID 목록"
+  description = "EKS 워커 노드(Data Plane)와 컨트롤 플레인이 배치될 서브넷 ID 목록"
   type        = list(string)
 }
 
 variable "cluster_version" {
   description = "쿠버네티스 버전"
   type        = string
-  default     = "1.31" # 기본값 설정
+  default     = "1.31"
 }
 
-variable "node_group_name" {
-  description = "EKS 워커 노드 그룹의 식별자"
-  default     = "worker-node"
-}
-
+# Jenkins Agent 설정을 위한 변수 추가
 variable "jenkins_iam_role_arn" {
-  description = "IAM Role ARN of Jenkins"
+  description = "IAM Role ARN of Jenkins Master (to allow access to EKS)"
   type        = string
 }
 
 variable "ci_subnet_ids" {
-  description = "Jenkins Agent가 배치될 서브넷 ID 리스트 (단일 AZ)"
+  description = "Jenkins Agent (CI-Build) 노드가 배치될 서브넷 ID 리스트 (단일 AZ 권장)"
   type        = list(string)
 }
