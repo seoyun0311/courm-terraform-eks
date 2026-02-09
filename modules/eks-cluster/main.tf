@@ -119,7 +119,7 @@ module "eks" {
       capacity_type  = "SPOT"
 
       min_size       = 1
-      max_size       = 5
+      max_size       = 1
       desired_size   = 1
 
       subnet_ids     = var.ci_subnet_ids
