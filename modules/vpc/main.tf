@@ -56,6 +56,9 @@
       # EKS 태그
       "kubernetes.io/role/internal-elb" = "1"
       "kubernetes.io/cluster/courm-eks-prod" = "shared"
+      
+      # Karpenter 태그
+      "karpenter.sh/discovery" = "courm-eks-prod"
     }
   }
 

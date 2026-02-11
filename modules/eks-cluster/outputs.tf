@@ -41,3 +41,27 @@ output "lb_controller_role_arn" {
   value       = module.lb_role.iam_role_arn
 }
 */
+
+# ==============================================================================
+# Karpenter Outputs (for courm-bootstrap configuration)
+# ==============================================================================
+
+output "karpenter_controller_role_arn" {
+  description = "IAM Role ARN for Karpenter Controller (annotate ServiceAccount with this)"
+  value       = module.karpenter.iam_role_arn
+}
+
+output "karpenter_node_role_name" {
+  description = "IAM Role Name for Karpenter Nodes (use in EC2NodeClass)"
+  value       = module.karpenter.node_iam_role_name
+}
+
+output "karpenter_node_instance_profile_name" {
+  description = "Instance Profile Name for Karpenter Nodes"
+  value       = module.karpenter.instance_profile_name
+}
+
+output "karpenter_queue_name" {
+  description = "SQS Queue Name for Spot Interruption Handling"
+  value       = module.karpenter.queue_name
+}

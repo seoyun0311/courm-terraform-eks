@@ -100,6 +100,7 @@ module "eks" {
     management = {
       name            = "${var.cluster_name}-ng-mgmt"
       use_name_prefix = false
+      iam_role_name   = "${var.cluster_name}-ng-mgmt-role"
       subnet_ids      = var.subnet_ids # AZ a, c
 
       min_size     = 1
@@ -120,6 +121,7 @@ module "eks" {
     monitoring = {
       name            = "${var.cluster_name}-ng-mon"
       use_name_prefix = false
+      iam_role_name   = "${var.cluster_name}-ng-mon-role"
       subnet_ids      = var.subnet_ids # AZ a, c
 
       min_size     = 1
@@ -140,6 +142,7 @@ module "eks" {
     data_store = {
       name            = "${var.cluster_name}-ng-data"
       use_name_prefix = false
+      iam_role_name   = "${var.cluster_name}-ng-data-role"
       subnet_ids      = var.subnet_ids # AZ a, c
 
       min_size     = 3
@@ -171,6 +174,7 @@ module "eks" {
     service_app = {
       name            = "${var.cluster_name}-ng-app"
       use_name_prefix = false
+      iam_role_name   = "${var.cluster_name}-ng-app-role"
       subnet_ids      = var.subnet_ids # AZ a, c
 
       min_size     = 2
@@ -191,6 +195,7 @@ module "eks" {
     ci_build = {
       name            = "courm-ng-ci"
       use_name_prefix = false
+      iam_role_name   = "courm-ng-ci-role"
       subnet_ids      = var.ci_subnet_ids
 
       min_size     = 1
@@ -233,6 +238,36 @@ module "eks" {
   }
 }
 
+# ==============================================================================
+# Karpenter Module (Controller + Node IAM Roles, SQS, EventBridge)
+# ==============================================================================
+module "karpenter" {
+  source  = "terraform-aws-modules/eks/aws//modules/karpenter"
+  version = "~> 20.0"
+
+  cluster_name = module.eks.cluster_name
+
+  # IRSA for Karpenter Controller
+  enable_irsa                     = true
+  irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
+  irsa_namespace_service_accounts = ["karpenter:karpenter"]
+
+  # Karpenter Node IAM Role
+  create_node_iam_role = true
+  node_iam_role_name   = "${var.cluster_name}-karpenter-node"
+  
+  node_iam_role_additional_policies = {
+    AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    AmazonEBSCSIDriverPolicy     = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+  }
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+    ManagedBy   = "Terraform"
+  }
+}
+
 /*
 # ==============================================================================
 # AWS Load Balancer Controller IAM Role
@@ -257,3 +292,18 @@ module "lb_role" {
   }
 }
 */
+
+# ==============================================================================
+# Karpenter Node Access Entry (Separate Resource to Avoid Cycle)
+# ==============================================================================
+resource "aws_eks_access_entry" "karpenter_node" {
+  cluster_name  = module.eks.cluster_name
+  principal_arn = module.karpenter.node_iam_role_arn
+  type          = "EC2_LINUX"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+    ManagedBy   = "Terraform"
+  }
+}
