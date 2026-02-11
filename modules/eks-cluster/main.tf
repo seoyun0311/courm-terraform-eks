@@ -249,6 +249,8 @@ module "karpenter" {
 
   # IRSA for Karpenter Controller
   enable_irsa                     = true
+  iam_role_name                   = "${var.cluster_name}-karpenter-controller-irsa"
+  iam_role_use_name_prefix        = false
   irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
   irsa_namespace_service_accounts = ["karpenter:karpenter"]
 
