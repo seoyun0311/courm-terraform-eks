@@ -15,15 +15,42 @@ output "cluster_certificate_authority_data" {
   value       = module.eks_cluster.cluster_certificate_authority_data
 }
 
+/*
 output "lb_controller_role_arn" {
   description = "IAM Role ARN for AWS Load Balancer Controller"
   value       = module.lb_role.iam_role_arn
 }
+*/
 
 output "jenkins_url" {
   description = "젠킨스 접속 URL"
   value       = "http://${module.jenkins.public_ip}:8080"
 }
+
+# ==============================================================================
+# Karpenter Outputs (for courm-bootstrap configuration)
+# ==============================================================================
+
+output "karpenter_controller_role_arn" {
+  description = "Karpenter Controller IAM Role ARN (annotate ServiceAccount)"
+  value       = module.eks_cluster.karpenter_controller_role_arn
+}
+
+output "karpenter_node_role_name" {
+  description = "Karpenter Node IAM Role Name (use in EC2NodeClass .spec.role)"
+  value       = module.eks_cluster.karpenter_node_role_name
+}
+
+output "karpenter_node_instance_profile_name" {
+  description = "Karpenter Node Instance Profile Name"
+  value       = module.eks_cluster.karpenter_node_instance_profile_name
+}
+
+output "karpenter_queue_name" {
+  description = "SQS Queue Name for Spot Interruption Handling"
+  value       = module.eks_cluster.karpenter_queue_name
+}
+
 /*
 output "rds_endpoints" {
   description = "DB 접속 주소"
