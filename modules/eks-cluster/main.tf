@@ -268,17 +268,3 @@ module "karpenter" {
   }
 }
 
-# ==============================================================================
-# Karpenter Node Access Entry (Separate Resource to Avoid Cycle)
-# ==============================================================================
-resource "aws_eks_access_entry" "karpenter_node" {
-  cluster_name  = module.eks.cluster_name
-  principal_arn = module.karpenter.node_iam_role_arn
-  type          = "EC2_LINUX"
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-    ManagedBy   = "Terraform"
-  }
-}
