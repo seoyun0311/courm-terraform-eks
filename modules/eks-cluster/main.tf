@@ -57,7 +57,16 @@ module "eks" {
         }
       }
     }
-
+    # IAM User: courm-ysy
+    courm_ysy = {
+      principal_arn = "arn:aws:iam::900808296075:user/courm-ysy"
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = { type = "cluster" }
+        }
+      }
+    }
     # IAM User: courm-jjm
     courm_jjm = {
       principal_arn = "arn:aws:iam::900808296075:user/courm-jjm"
@@ -70,7 +79,7 @@ module "eks" {
     }
     # IAM User: goorm-infra
     goorm_infra = {
-      principal_arn = "arn:aws:iam::${local.account_id}:user/goorm-infra"
+      principal_arn = "arn:aws:iam::900808296075:user/goorm-infra"
       policy_associations = {
         admin = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
