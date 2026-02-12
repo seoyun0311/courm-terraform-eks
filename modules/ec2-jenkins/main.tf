@@ -6,7 +6,7 @@ resource "aws_instance" "jenkins" {
 
   # SSH 접속용 키 페어
   key_name      = var.key_name
-
+  private_ip  = "10.0.30.246"
   iam_instance_profile = aws_iam_instance_profile.jenkins_ssm_profile.name
 
   # 보안 그룹
