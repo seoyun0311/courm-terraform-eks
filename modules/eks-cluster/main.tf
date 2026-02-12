@@ -112,9 +112,9 @@ module "eks" {
       iam_role_name   = "${var.cluster_name}-ng-mgmt-role"
       subnet_ids      = var.subnet_ids # AZ a, c
 
-      min_size     = 1
-      max_size     = 3
-      desired_size = 1
+      min_size     = 2
+      max_size     = 4
+      desired_size = 2
 
       instance_types = ["t3.medium"]
       capacity_type  = "ON_DEMAND"
@@ -133,9 +133,9 @@ module "eks" {
       iam_role_name   = "${var.cluster_name}-ng-mon-role"
       subnet_ids      = var.subnet_ids # AZ a, c
 
-      min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      min_size     = 2
+      max_size     = 4
+      desired_size = 2
 
       instance_types = ["t3.large"]
       capacity_type  = "ON_DEMAND"
@@ -155,7 +155,7 @@ module "eks" {
       subnet_ids      = var.subnet_ids # AZ a, c
 
       min_size     = 3
-      max_size     = 4
+      max_size     = 6
       desired_size = 3
 
       instance_types = ["t3.medium"]
@@ -186,9 +186,9 @@ module "eks" {
       iam_role_name   = "${var.cluster_name}-ng-app-role"
       subnet_ids      = var.subnet_ids # AZ a, c
 
-      min_size     = 2
+      min_size     = 4
       max_size     = 10
-      desired_size = 2
+      desired_size = 4
 
       instance_types = ["t3.medium"]
       capacity_type  = "ON_DEMAND"
@@ -211,7 +211,7 @@ module "eks" {
       max_size     = 2
       desired_size = 1
 
-      instance_types = ["t3.large"]
+      instance_types = ["m6i.xlarge"]
       capacity_type  = "SPOT"
 
       labels = {
