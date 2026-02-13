@@ -57,9 +57,9 @@ output "rds_endpoints" {
     order_master   = module.rds_order.rds_endpoint
   }
 }
-
+*/
 output "redis_endpoint" {
   description = "Redis 엔드포인트"
   value       = module.elasticache_redis.primary_endpoint
 }
-*/
+

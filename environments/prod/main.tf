@@ -163,7 +163,7 @@ module "rds_product" {
   create_read_replica = true
   tags               = { Service = "product-review" }
 }
-
+*/
 module "elasticache_redis" {
   source = "../../modules/elasticache"
 
@@ -174,7 +174,7 @@ module "elasticache_redis" {
   security_group_ids = [module.sg_redis.security_group_id]
   tags               = { Service = "product-cache-cart-lock" }
 }
-*/
+
 # ==============================================================================
 # 6. ECR & Other Resources
 # ==============================================================================
@@ -186,4 +186,30 @@ data "aws_ecr_repository" "repos" {
 resource "aws_guardduty_detector" "this" {
   enable = true
   tags   = { Name = "courm-guardduty-${var.environment}" }
+}
+
+# ==============================================================================
+# 4-1. Istio / Admission Webhook 추가 규칙
+# ==============================================================================
+
+# EKS Control Plane (Master) -> EKS Nodes (Istiod Webhook)
+resource "aws_security_group_rule" "eks_master_to_node_istio_webhook" {
+  description              = "Allow EKS Control Plane to reach Istiod Webhook (15017)"
+  type                     = "ingress"
+  from_port                = 15017
+  to_port                  = 15017
+  protocol                 = "tcp"
+  security_group_id        = module.eks_cluster.node_security_group_id
+  source_security_group_id = module.eks_cluster.cluster_security_group_id
+}
+
+# 다른 툴(Karpenter, Metric Server 등)을 위해 노드의 443~9443도 열어주는 것
+resource "aws_security_group_rule" "eks_master_to_node_general_webhooks" {
+  description              = "Allow EKS Control Plane to communicate with Webhooks on Nodes"
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 9443
+  protocol                 = "tcp"
+  security_group_id        = module.eks_cluster.node_security_group_id
+  source_security_group_id = module.eks_cluster.cluster_security_group_id
 }
