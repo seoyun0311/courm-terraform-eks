@@ -134,7 +134,6 @@ resource "aws_security_group_rule" "jenkins_ingress_jnlp_from_nodes" {
 # ==============================================================================
 # 5. Data Stores & Tools
 # ==============================================================================
-/*
 module "rds_order" {
   source = "../../modules/rds"
 
@@ -163,7 +162,7 @@ module "rds_product" {
   create_read_replica = true
   tags               = { Service = "product-review" }
 }
-*/
+
 module "elasticache_redis" {
   source = "../../modules/elasticache"
 
